@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vote — Korvoxel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0D0B14; --surface: #16122A; --border: #2A2245;
+      --purple: #9900CC; --purple-lit: #CC33FF; --pink: #FF55FF; --amber: #D97706;
+      --text: #F0EEFF; --muted: #8B80AA; --radius: 12px;
+    }
+    .k1 { color: #CC00CC; } .k2 { color: #FF66FF; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(13,11,20,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.5rem; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--purple-lit); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links .active { color: var(--text); }
+    .nav-cta { background: var(--purple); color: white !important; padding: 0.4rem 1rem; border-radius: 6px; }
+
+    .page-header { padding: 8rem 2rem 4rem; max-width: 800px; margin: 0 auto; border-bottom: 1px solid var(--border); }
+    .page-eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--purple-lit); margin-bottom: 0.75rem; }
+    .page-header h1 { font-family: 'Rajdhani', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 700; line-height: 1; margin-bottom: 1rem; }
+    .page-header p { color: var(--muted); max-width: 500px; }
+
+    .vote-content { max-width: 800px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+
+    .vote-info {
+      background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.3);
+      border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 2.5rem;
+      font-size: 0.95rem; color: var(--muted);
+    }
+    .vote-info strong { color: var(--purple-lit); }
+
+    .vote-grid { display: flex; flex-direction: column; gap: 1rem; }
+
+    .vote-card {
+      display: flex; align-items: center; gap: 1.5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem; text-decoration: none;
+      color: var(--text); transition: all 0.2s;
+    }
+    .vote-card:hover { border-color: var(--purple); transform: translateX(4px); box-shadow: 0 4px 20px rgba(124,58,237,0.2); }
+
+    .vote-icon { font-size: 2rem; min-width: 48px; text-align: center; }
+
+    .vote-info-text { flex: 1; }
+    .vote-site-name { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .vote-site-desc { font-size: 0.85rem; color: var(--muted); }
+
+    .vote-btn {
+      background: var(--purple); color: white; padding: 0.5rem 1.25rem;
+      border-radius: 8px; font-size: 0.85rem; font-weight: 600; white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .vote-card:hover .vote-btn { background: var(--purple-lit); }
+
+    .rewards-section { margin-top: 3rem; }
+    .rewards-section h2 { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 1.5rem; }
+    .rewards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+    .reward-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.25rem; text-align: center;
+    }
+    .reward-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .reward-name { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; color: var(--purple-lit); margin-bottom: 0.2rem; }
+    .reward-desc { font-size: 0.8rem; color: var(--muted); }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 1.5rem; justify-content: center; list-style: none; margin-bottom: 1rem; flex-wrap: wrap; }
+
+    @media (max-width: 640px) { .nav-links { display: none; } .vote-card { flex-direction: column; text-align: center; } .vote-btn { width: 100%; text-align: center; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="./index.html" class="nav-logo"><span class="k1">Korv</span><span class="k2">oxel</span></a>
+    <ul class="nav-links">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./vote.html" class="active">Vote</a></li>
+      <li><a href="./staff.html">Staff</a></li>
+      <li><a href="./rules.html">Rules</a></li>
+      <li><a href="https://korvoxel.tebex.io" target="_blank" class="nav-cta">Store</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header">
+    <p class="page-eyebrow">Support the server</p>
+    <h1>Vote for Us</h1>
+    <p>Voting is free, takes 30 seconds, and helps new players find the server. You'll earn in-game rewards every time!</p>
+  </div>
+
+  <div class="vote-content">
+
+    <div class="vote-info">
+      <strong>How it works:</strong> Click a site below, enter your Minecraft username, and vote. You can vote once per site every 24 hours. Rewards are delivered automatically in-game.
+    </div>
+
+    <div class="vote-grid">
+      <!-- Add your real vote links below — register at each site first -->
+      <a href="https://minecraft-server-list.com/server/YOUR_ID/vote/" target="_blank" class="vote-card">
+        <span class="vote-icon">🏆</span>
+        <div class="vote-info-text">
+          <div class="vote-site-name">Minecraft Server List</div>
+          <div class="vote-site-desc">One of the largest Minecraft server directories</div>
+        </div>
+        <span class="vote-btn">Vote →</span>
+      </a>
+
+      <a href="https://minecraft-mp.com/server/YOUR_ID/vote/" target="_blank" class="vote-card">
+        <span class="vote-icon">⭐</span>
+        <div class="vote-info-text">
+          <div class="vote-site-name">Minecraft MP</div>
+          <div class="vote-site-desc">Top Minecraft server rankings</div>
+        </div>
+        <span class="vote-btn">Vote →</span>
+      </a>
+
+      <a href="https://topminecraftservers.org/vote/YOUR_ID" target="_blank" class="vote-card">
+        <span class="vote-icon">🎯</span>
+        <div class="vote-info-text">
+          <div class="vote-site-name">Top Minecraft Servers</div>
+          <div class="vote-site-desc">Vote and help us climb the rankings</div>
+        </div>
+        <span class="vote-btn">Vote →</span>
+      </a>
+
+      <a href="https://minecraftservers.org/vote/YOUR_ID" target="_blank" class="vote-card">
+        <span class="vote-icon">🌟</span>
+        <div class="vote-info-text">
+          <div class="vote-site-name">MinecraftServers.org</div>
+          <div class="vote-site-desc">A well-known community server list</div>
+        </div>
+        <span class="vote-btn">Vote →</span>
+      </a>
+    </div>
+
+    <div class="rewards-section">
+      <h2>Vote Rewards</h2>
+      <div class="rewards-grid">
+        <div class="reward-card">
+          <div class="reward-icon">🪙</div>
+          <div class="reward-name">Coins</div>
+          <div class="reward-desc">Earn in-game currency per vote</div>
+        </div>
+        <div class="reward-card">
+          <div class="reward-icon">🎁</div>
+          <div class="reward-name">Vote Crate</div>
+          <div class="reward-desc">Random rewards from the vote crate</div>
+        </div>
+        <div class="reward-card">
+          <div class="reward-icon">⚡</div>
+          <div class="reward-name">XP Boost</div>
+          <div class="reward-desc">Temporary XP multiplier</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <ul class="footer-links">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./rules.html">Rules</a></li>
+      <li><a href="./vote.html">Vote</a></li>
+      <li><a href="./staff.html">Staff</a></li>
+      <li><a href="https://korvoxel.tebex.io" target="_blank">Store</a></li>
+    </ul>
+    <p>© 2025 Korvoxel · Not affiliated with Mojang or Microsoft</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff — Korvoxel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0D0B14; --surface: #16122A; --border: #2A2245;
+      --purple: #9900CC; --purple-lit: #CC33FF; --pink: #FF55FF; --amber: #D97706;
+      --text: #F0EEFF; --muted: #8B80AA; --radius: 12px;
+    }
+    .k1 { color: #CC00CC; } .k2 { color: #FF66FF; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(13,11,20,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.5rem; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--purple-lit); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links .active { color: var(--text); }
+    .nav-cta { background: var(--purple); color: white !important; padding: 0.4rem 1rem; border-radius: 6px; }
+
+    .page-header { padding: 8rem 2rem 4rem; max-width: 900px; margin: 0 auto; border-bottom: 1px solid var(--border); }
+    .page-eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--purple-lit); margin-bottom: 0.75rem; }
+    .page-header h1 { font-family: 'Rajdhani', sans-serif; font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 700; line-height: 1; margin-bottom: 1rem; }
+    .page-header p { color: var(--muted); max-width: 500px; }
+
+    .staff-content { max-width: 900px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+
+    .tier { margin-bottom: 3rem; }
+
+    .tier-label {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1.5rem; padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tier-badge {
+      padding: 0.2rem 0.75rem; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+
+    .badge-owner { background: rgba(217,119,6,0.2); color: var(--amber); border: 1px solid rgba(217,119,6,0.4); }
+    .badge-admin { background: rgba(219,39,119,0.2); color: var(--pink); border: 1px solid rgba(219,39,119,0.4); }
+    .badge-mod { background: rgba(124,58,237,0.2); color: var(--purple-lit); border: 1px solid rgba(124,58,237,0.4); }
+    .badge-helper { background: rgba(16,185,129,0.2); color: #10B981; border: 1px solid rgba(16,185,129,0.4); }
+
+    .tier-title { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; }
+
+    .staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+
+    .staff-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .staff-card:hover { border-color: var(--purple); transform: translateY(-3px); }
+
+    .staff-avatar {
+      width: 64px; height: 64px; border-radius: 8px;
+      background: var(--border); margin-bottom: 1rem;
+      overflow: hidden; image-rendering: pixelated;
+    }
+
+    .staff-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .staff-avatar-placeholder {
+      width: 64px; height: 64px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700;
+      color: white; margin-bottom: 1rem;
+    }
+
+    .staff-name { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .staff-role { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; }
+    .staff-badge { margin-top: auto; }
+
+    .apply-box {
+      background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(219,39,119,0.05));
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 2.5rem; text-align: center; margin-top: 3rem;
+    }
+    .apply-box h2 { font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .apply-box p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.2s; }
+    .btn-primary { background: var(--purple); color: white; }
+    .btn-primary:hover { background: var(--purple-lit); }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 1.5rem; justify-content: center; list-style: none; margin-bottom: 1rem; flex-wrap: wrap; }
+
+    @media (max-width: 640px) { .nav-links { display: none; } .page-header, .staff-content { padding-left: 1.25rem; padding-right: 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="./index.html" class="nav-logo"><span class="k1">Korv</span><span class="k2">oxel</span></a>
+    <ul class="nav-links">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./vote.html">Vote</a></li>
+      <li><a href="./staff.html" class="active">Staff</a></li>
+      <li><a href="./rules.html">Rules</a></li>
+      <li><a href="https://korvoxel.tebex.io" target="_blank" class="nav-cta">Store</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header">
+    <p class="page-eyebrow">The team</p>
+    <h1>Meet the Staff</h1>
+    <p>The people who keep Korvoxel running. Have an issue? Reach out to any staff member in Discord.</p>
+  </div>
+
+  <div class="staff-content">
+
+    <!-- OWNER -->
+    <div class="tier">
+      <div class="tier-label">
+        <span class="tier-badge badge-owner">Owner</span>
+        <span class="tier-title">Server Owners</span>
+      </div>
+      <div class="staff-grid">
+        <!-- Edit the names and roles below — add or remove cards as needed -->
+        <div class="staff-card">
+          <div class="staff-avatar-placeholder">K</div>
+          <div class="staff-name">YourUsername</div>
+          <div class="staff-role">Server founder & developer</div>
+          <span class="tier-badge badge-owner">Owner</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="tier">
+      <div class="tier-label">
+        <span class="tier-badge badge-admin">Admin</span>
+        <span class="tier-title">Administrators</span>
+      </div>
+      <div class="staff-grid">
+        <div class="staff-card">
+          <div class="staff-avatar-placeholder">A</div>
+          <div class="staff-name">AdminName</div>
+          <div class="staff-role">Server management & events</div>
+          <span class="tier-badge badge-admin">Admin</span>
+        </div>
+        <!-- Duplicate a .staff-card block to add more admins -->
+      </div>
+    </div>
+
+    <!-- MODERATOR -->
+    <div class="tier">
+      <div class="tier-label">
+        <span class="tier-badge badge-mod">Moderator</span>
+        <span class="tier-title">Moderators</span>
+      </div>
+      <div class="staff-grid">
+        <div class="staff-card">
+          <div class="staff-avatar-placeholder">M</div>
+          <div class="staff-name">ModName</div>
+          <div class="staff-role">In-game moderation</div>
+          <span class="tier-badge badge-mod">Moderator</span>
+        </div>
+        <div class="staff-card">
+          <div class="staff-avatar-placeholder">M</div>
+          <div class="staff-name">ModName</div>
+          <div class="staff-role">In-game moderation</div>
+          <span class="tier-badge badge-mod">Moderator</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HELPER -->
+    <div class="tier">
+      <div class="tier-label">
+        <span class="tier-badge badge-helper">Helper</span>
+        <span class="tier-title">Helpers</span>
+      </div>
+      <div class="staff-grid">
+        <div class="staff-card">
+          <div class="staff-avatar-placeholder">H</div>
+          <div class="staff-name">HelperName</div>
+          <div class="staff-role">Player support</div>
+          <span class="tier-badge badge-helper">Helper</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="apply-box">
+      <h2>Want to join the team?</h2>
+      <p>We're always looking for dedicated and friendly players to join the Korvoxel staff team. Apply in our Discord server.</p>
+      <a href="https://discord.gg/korvoxel" target="_blank" class="btn btn-primary">Apply on Discord</a>
+    </div>
+
+  </div>
+
+  <footer>
+    <ul class="footer-links">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./rules.html">Rules</a></li>
+      <li><a href="./vote.html">Vote</a></li>
+      <li><a href="./staff.html">Staff</a></li>
+      <li><a href="https://korvoxel.tebex.io" target="_blank">Store</a></li>
+    </ul>
+    <p>© 2025 Korvoxel · Not affiliated with Mojang or Microsoft</p>
+  </footer>
+
+</body>
+</html>
