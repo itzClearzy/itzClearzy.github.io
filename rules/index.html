@@ -1,1 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rules — Korvoxel</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0D0B14; --surface: #16122A; --border: #2A2245;
+      --purple: #9900CC; --purple-lit: #CC33FF; --pink: #FF55FF;
+      --red: #EF4444; --yellow: #F59E0B; --green: #10B981;
+      --text: #F0EEFF; --muted: #8B80AA; --radius: 12px;
+    }
+    .k1 { color: #CC00CC; } .k2 { color: #FF66FF; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.6; }
 
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 2rem; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(13,11,20,0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: 0.04em; color: var(--text); text-decoration: none; }
+    .nav-logo .k1 { color: #CC00CC; }
+    .nav-logo .k2 { color: #FF66FF; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.03em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links .active { color: var(--text); }
+    .nav-cta { background: var(--purple); color: white !important; padding: 0.4rem 1rem; border-radius: 6px; }
+
+    .page-header {
+      padding: 8rem 2rem 4rem;
+      max-width: 800px;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-eyebrow {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--purple-lit); margin-bottom: 0.75rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .page-header p { color: var(--muted); max-width: 500px; }
+
+    .rules-content { max-width: 800px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+
+    .rules-intro {
+      background: rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 3rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .rules-intro strong { color: var(--purple-lit); }
+
+    .rule-section { margin-bottom: 3rem; }
+
+    .rule-section-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .rule-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .rule-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      transition: border-color 0.2s;
+    }
+
+    .rule-item:hover { border-color: var(--purple); }
+
+    .rule-number {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--purple-lit);
+      min-width: 28px;
+      margin-top: 2px;
+    }
+
+    .rule-text { font-size: 0.95rem; color: var(--text); line-height: 1.6; }
+    .rule-text strong { color: var(--pink); }
+
+    .severity {
+      margin-left: auto;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      align-self: flex-start;
+    }
+
+    .sev-low { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+    .sev-med { background: rgba(245,158,11,0.15); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
+    .sev-high { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+
+    .punishment-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .punishment-table th {
+      background: var(--surface);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .punishment-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .punishment-table tr:last-child td { border-bottom: none; }
+    .punishment-table tr:nth-child(even) td { background: rgba(22,18,42,0.5); }
+
+    .appeal-box {
+      background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(219,39,119,0.05));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    .appeal-box h3 { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .appeal-box p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 600;
+      font-size: 0.9rem; text-decoration: none; transition: all 0.2s;
+    }
+    .btn-primary { background: var(--purple); color: white; }
+    .btn-primary:hover { background: var(--purple-lit); }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 1.5rem; justify-content: center; list-style: none; margin-bottom: 1rem; flex-wrap: wrap; }
+
+    @media (max-width: 640px) { .nav-links { display: none; } .page-header, .rules-content { padding-left: 1.25rem; padding-right: 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo"><span class="k1">Korv</span><span class="k2">oxel</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/vote">Vote</a></li>
+      <li><a href="/staff">Staff</a></li>
+      <li><a href="/rules" class="active">Rules</a></li>
+      <li><a href="https://korvoxel.tebex.io" target="_blank" class="nav-cta">Store</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-header">
+    <p class="page-eyebrow">korvoxel.net/rules</p>
+    <h1>Server Rules</h1>
+    <p>All players are expected to follow these rules. Ignorance is not an excuse — read them before you play.</p>
+  </div>
+
+  <div class="rules-content">
+
+    <div class="rules-intro">
+      <strong>Last updated: May 2025.</strong> These rules apply across all game modes, Discord, and any Korvoxel platform. Staff have final say in all situations. If something isn't listed here but is clearly harmful to the community, it can still result in punishment.
+    </div>
+
+    <!-- GENERAL -->
+    <div class="rule-section">
+      <h2 class="rule-section-title">🌐 General Conduct</h2>
+      <ul class="rule-list">
+        <li class="rule-item">
+          <span class="rule-number">G1</span>
+          <span class="rule-text">Treat all players and staff with respect. <strong>Harassment, bullying, or targeted abuse</strong> of any kind is not tolerated.</span>
+          <span class="severity sev-high">Permanent ban</span>
+        </li>
+        <li class="rule-item">
+          <span class="rule-number">G2</span>
+          <span class="rule-text"><strong>No hate speech</strong> — racial slurs, homophobic language, or discrimination of any kind.</span>
+          <span class="severity sev-high">Permanent ban</span>
+        </li>
+        <li class="rule-item">
+          <span class="rule-number">G3</span>
+          <span class="rule-text"><strong>No spam</strong> in chat — repeated messages, excessive caps, or flooding.</span>
+          <span class="severity sev-low">Mute</span>
+        </li>
+        <li class="rule-item">
+          <span class="rule-number">G4</span>
+          <span class="rule-text"><strong>No advertising</strong> other servers, Discord invites, or external links in chat.</span>
+          <span class="severity sev-med">Temp ban</span>
+        </li>
+        <li class="rule-item">
+          <span class="rule-number">G5</span>
+          <span class="rule-text"><strong>No inappropriate usernames</strong> or skins. Staff may ask you to change them.</span>
+          <span class="severity sev-med">Kick/ban</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- CHEATING -->
+    <div class="rule-section">
+      <h2 class="rule-section-title">⚔️ Cheating & Exploits</h2>
+      <ul class="rule-list">
+        <li class="rule-item">
+          <span class="rule-number">C1</span>
+          <span class="rule-text"><strong>No hacked clients, cheats, or unfair mods</strong> — this includes kill aura, reach, no-knockback, and speed.</span>
+          <span class="severity sev-high">Permanent ban</span>
+        </li>
+        <li class="rule-item">
+          <span class="rule-number">C2</span>
+          <span class="rule-text"><strong>No exploiting bugs or glitches</strong> for an advantage. Report them to staff instead.</span>
+          <span class="severity sev-med">Temp ban</span>
+        </li>
+        <li class="rule-item">
+          <span class="rule-number">C3</span>
+          <span class="rule-text"><strong>No teaming</strong> in FFA modes unless a specific mode allows it.</span>
+          <span class="severity sev-low">Warning/kick</span>
+        </li>
+        <li class="rule-item">
+          <span class="rule-number">C4</span>
+          <span class="rule-text"><strong>Allowed mods</strong>: Optifine, FPS boosters, minimaps (no entity radar), and cosmetic mods. When in doubt, ask a staff member.</span>
+          <span class="severity sev-low">Info</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- BEHAVIOUR -->
+    <div class="rule-section">
+      <h2 class="rule-section-title">💬 In-Game Behaviour</h2>
+      <ul class="rule-list">
+        <li class="rule-item">
+          <span class="rule-number">B1</span>
+          <span class="rule-text"><strong>No griefing</strong> outside of designated PvP areas or modes that allow it.</span>
+          <span class="severity sev-med">Temp ban</span>
+        </li>
+        <li class="rule-item">
+          <span class="rule-number">B2</span>
+          <span class="rule-text"><strong>No impersonating staff</strong> members or pretending to have permissions you don't.</span>
+          <span class="severity sev-high">Perm ban</span>
+        </li>
+        <li class="rule-item">
+          <span class="rule-number">B3</span>
+          <span class="rule-text"><strong>Do not argue with staff decisions</strong> in public chat. Use Discord to raise concerns professionally.</span>
+          <span class="severity sev-low">Warning</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- PUNISHMENT TABLE -->
+    <div class="rule-section">
+      <h2 class="rule-section-title">📋 Punishment Scale</h2>
+      <table class="punishment-table">
+        <thead>
+          <tr>
+            <th>Severity</th>
+            <th>First offence</th>
+            <th>Repeat offence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>🟢 Low</td><td>Warning or mute</td><td>Kick or temp mute</td></tr>
+          <tr><td>🟡 Medium</td><td>Temp ban (1–7 days)</td><td>Longer temp ban</td></tr>
+          <tr><td>🔴 High</td><td>Permanent ban</td><td>Permanent ban (no appeal)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="appeal-box">
+      <h3>Think your ban was unfair?</h3>
+      <p>Appeal your punishment by opening a ticket in our Discord server. Provide your username and reason for appeal.</p>
+      <a href="https://discord.gg/korvoxel" target="_blank" class="btn btn-primary">Open a Ticket on Discord</a>
+    </div>
+  </div>
+
+  <footer>
+    <ul class="footer-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/rules">Rules</a></li>
+      <li><a href="/vote">Vote</a></li>
+      <li><a href="/staff">Staff</a></li>
+      <li><a href="https://korvoxel.tebex.io" target="_blank">Store</a></li>
+    </ul>
+    <p>© 2025 Korvoxel · Not affiliated with Mojang or Microsoft</p>
+  </footer>
+
+</body>
+</html>
