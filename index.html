@@ -6,6 +6,7 @@
   <title>Korvoxel — Minecraft Minigames Server</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="apple-touch-icon" href="/favicon.png">
+  <link rel="preload" as="image" href="/lobby1.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -107,13 +108,17 @@
       overflow: hidden;
     }
 
-    /* Lobby screenshot background — swap src to lobby1.png once uploaded */
+    /* Lobby screenshot background */
     .hero-bg {
       position: absolute;
       inset: 0;
-      background:
+      background-color: #1a0a2e;
+      background-image:
         linear-gradient(to bottom, rgba(13,11,20,0.55) 0%, rgba(13,11,20,0.80) 70%, var(--bg) 100%),
-        url('/lobby1.png') center/cover no-repeat;
+        url('/lobby1.png');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
 
     /* Fallback gradient when image isn't uploaded yet */
@@ -670,6 +675,17 @@
         }, 2000);
       });
     }
+
+    // Fix gallery: handle images that are already cached and loaded before onload fires
+    document.querySelectorAll('.screenshot img').forEach(img => {
+      if (img.complete) {
+        if (img.naturalWidth > 0) {
+          img.nextElementSibling.style.display = 'none';
+        } else {
+          img.style.display = 'none';
+        }
+      }
+    });
 
     // Spawn floating pixel particles
     const container = document.getElementById('particles');
